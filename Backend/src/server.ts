@@ -2,7 +2,11 @@ import express from "express";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
+import { config } from "./config/index.js";
+import { logger } from "./logger.js";
 
+console.log(config.port, config.thresholds.warningMs);
+logger.info("config + logger OK");
 dotenv.config();
 
 const app = express();
