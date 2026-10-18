@@ -1,38 +1,53 @@
 {
-  "name": "backend",
+  "name": "api-monitor-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/server.ts",
-  "scripts": {
-    "dev": "tsx src/server.ts",
-    "start": "node --import tsx src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
+  "description": "Intelligent API Monitoring & AI Alert System - backend",
   "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node --import tsx src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:generate": "prisma generate",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:studio": "prisma studio",
+    "lint": "eslint src tests",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "generate:prompts-doc": "tsx scripts/generate-ai-prompts-doc.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
-    "cors": "^2.8.6",
-    "dotenv": "^18.0.8",
-    "express": "^5.3.0",
-    "express-rate-limit": "^8.7.1",
-    "helmet": "^8.3.0",
-    "openai": "^7.38.0",
-    "pino": "^10.4.0",
-    "pino-http": "^11.0.0",
-    "zod": "^4.6.7"
+    "@prisma/client": "^6.5.0",
+    "cors": "^2.8.5",
+    "docx": "^9.12.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "openai": "^5.0.0",
+    "pino": "^9.6.0",
+    "pino-http": "^10.4.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.6.5",
-    "@types/supertest": "^7.2.1",
-    "prisma": "^6.19.3",
-    "supertest": "^7.3.1",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.10",
+    "@types/supertest": "^6.0.2",
+    "eslint": "^9.22.0",
+    "pino-pretty": "^13.0.0",
+    "prettier": "^3.5.3",
+    "prisma": "^6.5.0",
+    "supertest": "^7.1.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.1",
+    "vitest": "^3.0.8"
   }
 }

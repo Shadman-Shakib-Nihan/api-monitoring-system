@@ -32,8 +32,9 @@ app.use((_req, res) => {
 });
 
 const port = Number(process.env.PORT) || 4000;
-const host = process.env.HOST || "localhost";
+const host = process.env.HOST || "0.0.0.0";
 
 app.listen(port, host, () => {
-  console.log(`Server running at http://${host}:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Listening on ${host}:${port}`);
 });
