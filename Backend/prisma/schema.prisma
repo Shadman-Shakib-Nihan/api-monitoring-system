@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Alert {
+  id                   String   @id @default(cuid())
+  apiName              String
+  severity             String // "CRITICAL" | "WARNING"
+  anomalyTypes         String // JSON-encoded string[] of anomaly type codes
+  statusCode           Int?
+  responseTimeMs       Int?
+  recordsReturned      Int?
+  evidence             String // JSON-encoded Finding[]
+  title                String
+  summary              String
+  likelyCause          String
+  suggestedActions     String // JSON-encoded string[]
+  severityExplanation  String
+  source               String // "AI" | "FALLBACK"
+  status               String   @default("ACTIVE") // "ACTIVE" | "RESOLVED"
+  fingerprint          String
+  occurrenceCount      Int      @default(1)
+  lastObservedAt       DateTime @default(now())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  resolvedAt           DateTime?
+
+  @@index([status])
+  @@index([severity])
+  @@index([apiName])
+  @@index([fingerprint, status])
+  @@index([createdAt])
+}
