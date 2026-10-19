@@ -19,8 +19,12 @@ const envSchema = z.object({
   EMPTY_RESULT_ALLOWED_APIS: z.string().default("HealthCheckAPI,StatusAPI"),
   MAX_BATCH_SIZE: z.coerce.number().int().positive().default(50),
   MAX_BODY_SIZE_BYTES: z.coerce.number().int().positive().default(262_144),
-  OPENAI_API_KEY: z.string().optional().default(""),
-  OPENAI_MODEL: z.string().default("gpt-4o-mini"),
+ // OPENAI_API_KEY: z.string().optional().default(""),
+  //OPENAI_MODEL: z.string().default("gpt-4o-mini"),
+  // rename/add in the Zod env schema:
+  GEMINI_API_KEY: z.string().optional().default(""),
+  GEMINI_MODEL: z.string().default("gemini-2.0-flash"),
+
   AI_TIMEOUT_MS: z.coerce.number().int().positive().default(8000),
   AI_MAX_CONCURRENT: z.coerce.number().int().positive().default(2),
   AI_MAX_CALLS_PER_BATCH: z.coerce.number().int().positive().default(10),
@@ -85,8 +89,8 @@ function parseConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       maxBodySizeBytes: e.MAX_BODY_SIZE_BYTES,
     },
     ai: {
-      apiKey: e.OPENAI_API_KEY,
-      model: e.OPENAI_MODEL,
+      apiKey: e.GEMINI_API_KEY,
+      model: e.GEMINI_MODEL,
       timeoutMs: e.AI_TIMEOUT_MS,
       maxConcurrent: e.AI_MAX_CONCURRENT,
       maxCallsPerBatch: e.AI_MAX_CALLS_PER_BATCH,
