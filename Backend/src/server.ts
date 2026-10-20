@@ -7,6 +7,7 @@ import { logger } from "./logger.js";
 import { globalRateLimiter } from "./middleware/rateLimit.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { monitorRouter } from "./routes/monitor.js";
+import { alertsRouter } from "./routes/alerts.js";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/monitor", monitorRouter);
+app.use("/alerts", alertsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

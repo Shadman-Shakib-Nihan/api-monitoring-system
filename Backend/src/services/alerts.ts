@@ -36,11 +36,11 @@ export interface RecordAlertInput {
 }
 
 export interface ListAlertsOptions {
-  status?: string;
-  severity?: string;
-  apiName?: string;
-  limit?: number;
-  offset?: number;
+  status?: string | undefined;
+  severity?: string | undefined;
+  apiName?: string | undefined;
+  limit?: number | undefined;
+  offset?: number | undefined;
 }
 
 export interface ListAlertsResult {
