@@ -1,6 +1,12 @@
 import { createHash } from "crypto";
 import type { AppConfig } from "../config/index.js";
-import type { AnomalyType, ApiObservation, EvaluationResult, Finding, Severity } from "./types.js";
+import type {
+  AnomalyType,
+  ApiObservation,
+  EvaluationResult,
+  Finding,
+  Severity,
+} from "./types.js";
 import { SEVERITY_RANK } from "./types.js";
 
 export interface RuleEngineOptions {
@@ -79,7 +85,11 @@ function checkHttpStatus(o: ApiObservation, findings: Finding[]): void {
   }
 }
 
-function checkLatency(o: ApiObservation, opts: RuleEngineOptions, findings: Finding[]): void {
+function checkLatency(
+  o: ApiObservation,
+  opts: RuleEngineOptions,
+  findings: Finding[],
+): void {
   if (o.response_time_ms > opts.criticalMs) {
     findings.push({
       anomaly_type: "LATENCY_CRITICAL",
@@ -134,7 +144,11 @@ export function evaluateObservation(
   checkUnexpectedEmpty(observation, opts, findings);
 
   const severity = highestSeverity(findings);
-  const fingerprint = computeFingerprint(observation.api_name, findings, observation.status_code);
+  const fingerprint = computeFingerprint(
+    observation.api_name,
+    findings,
+    observation.status_code,
+  );
 
   return {
     observation,

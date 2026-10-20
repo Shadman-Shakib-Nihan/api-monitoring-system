@@ -1,4 +1,10 @@
-import type { ErrorRequestHandler, NextFunction, Request, RequestHandler, Response } from "express";
+import type {
+  ErrorRequestHandler,
+  NextFunction,
+  Request,
+  RequestHandler,
+  Response,
+} from "express";
 import { ZodError } from "zod";
 import { config } from "../config/index.js";
 import { logger } from "../logger.js";
@@ -36,7 +42,12 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     return;
   }
 
-  const bodyErr = err as { type?: string; status?: number; statusCode?: number; message?: string };
+  const bodyErr = err as {
+    type?: string;
+    status?: number;
+    statusCode?: number;
+    message?: string;
+  };
 
   if (bodyErr.type === "entity.too.large") {
     res.status(413).json({
@@ -55,7 +66,10 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   }
 
   const rawStatus = bodyErr.status ?? bodyErr.statusCode;
-  const status = typeof rawStatus === "number" && rawStatus >= 400 && rawStatus < 500 ? rawStatus : 500;
+  const status =
+    typeof rawStatus === "number" && rawStatus >= 400 && rawStatus < 500
+      ? rawStatus
+      : 500;
 
   if (status < 500) {
     logger.warn(

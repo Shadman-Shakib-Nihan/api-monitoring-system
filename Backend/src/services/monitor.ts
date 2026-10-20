@@ -1,20 +1,13 @@
 import type { PrismaClient } from "@prisma/client";
 import { config } from "../config/index.js";
-import {
-  evaluateBatch,
-  ruleEngineOptionsFromConfig,
-} from "../monitoring/rules.js";
+import { evaluateBatch, ruleEngineOptionsFromConfig } from "../monitoring/rules.js";
 import type {
   ApiObservation,
   EvaluationResult,
   ExplanationSource,
   Severity,
 } from "../monitoring/types.js";
-import {
-  FallbackAlertExplainer,
-  createExplainer,
-  mapWithConcurrency,
-} from "./ai.js";
+import { FallbackAlertExplainer, createExplainer, mapWithConcurrency } from "./ai.js";
 import type { AlertExplainer } from "./ai.js";
 import { recordAlert } from "./alerts.js";
 
@@ -89,7 +82,10 @@ export async function processObservations(
   const explainer = options.explainer ?? getExplainer();
   const fallback = new FallbackAlertExplainer();
 
-  const explainedByResult = new Map<EvaluationResult, Awaited<ReturnType<AlertExplainer["explain"]>>>();
+  const explainedByResult = new Map<
+    EvaluationResult,
+    Awaited<ReturnType<AlertExplainer["explain"]>>
+  >();
 
   const aiExplained = await mapWithConcurrency(
     aiTargets,

@@ -58,7 +58,9 @@ function buildUserPrompt(result: EvaluationResult): string {
 export function buildFallbackExplanation(result: EvaluationResult): AlertExplanation {
   const api = result.observation.api_name;
   const severity = result.severity ?? "WARNING";
-  const types = result.findings.map((f) => ANOMALY_TYPE_LABELS[f.anomaly_type] ?? f.anomaly_type);
+  const types = result.findings.map(
+    (f) => ANOMALY_TYPE_LABELS[f.anomaly_type] ?? f.anomaly_type,
+  );
   const title = `${api}: ${severity.toLowerCase()} — ${types[0] ?? "anomaly detected"}`;
   const summary =
     `Monitoring detected ${result.findings.length} issue(s) on "${api}": ` +
@@ -100,7 +102,8 @@ export function buildFallbackExplanation(result: EvaluationResult): AlertExplana
         break;
     }
   }
-  if (actions.length === 0) actions.push(`Review recent activity and dashboards for ${api}.`);
+  if (actions.length === 0)
+    actions.push(`Review recent activity and dashboards for ${api}.`);
 
   const severityExplanation =
     `Severity ${severity} was assigned by the deterministic monitoring rules ` +
@@ -123,7 +126,6 @@ export class FallbackAlertExplainer implements AlertExplainer {
   }
 }
 
-
 export class GeminiAlertExplainer implements AlertExplainer {
   readonly source: ExplanationSource = "AI";
 
@@ -136,36 +138,36 @@ export class GeminiAlertExplainer implements AlertExplainer {
     const gemini = this.clientFactory();
 
     const response = await gemini.models.generateContent({
-        model: this.cfg.model,
-        contents: buildUserPrompt(result),
-        config: {
-          systemInstruction: SYSTEM_PROMPT,
-          temperature: 0.2,
-          maxOutputTokens: 1200,
-          thinkingConfig: { thinkingBudget: 0 },
-          responseMimeType: "application/json",
-          responseJsonSchema: {
-            type: "OBJECT",
-            properties: {
-              title: { type: "STRING" },
-              summary: { type: "STRING" },
-              likely_cause: { type: "STRING" },
-              suggested_actions: {
-                type: "ARRAY",
-                items: { type: "STRING" },
-              },
-              severity_explanation: { type: "STRING" },
+      model: this.cfg.model,
+      contents: buildUserPrompt(result),
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        temperature: 0.2,
+        maxOutputTokens: 1200,
+        thinkingConfig: { thinkingBudget: 0 },
+        responseMimeType: "application/json",
+        responseJsonSchema: {
+          type: "OBJECT",
+          properties: {
+            title: { type: "STRING" },
+            summary: { type: "STRING" },
+            likely_cause: { type: "STRING" },
+            suggested_actions: {
+              type: "ARRAY",
+              items: { type: "STRING" },
             },
-            required: [
-              "title",
-              "summary",
-              "likely_cause",
-              "suggested_actions",
-              "severity_explanation",
-            ],
+            severity_explanation: { type: "STRING" },
           },
+          required: [
+            "title",
+            "summary",
+            "likely_cause",
+            "suggested_actions",
+            "severity_explanation",
+          ],
         },
-      });
+      },
+    });
 
     const content = response.text;
 
@@ -196,9 +198,6 @@ export class GeminiAlertExplainer implements AlertExplainer {
     };
   }
 }
-
-
-
 
 // export class OpenAIAlertExplainer implements AlertExplainer {
 //   readonly source: ExplanationSource = "AI";
@@ -292,12 +291,9 @@ export class AiExplainerService implements AlertExplainer {
   }
 }
 
-
 export function createExplainer(config: AppConfig): AlertExplainer {
   if (!config.ai.apiKey) {
-    logger.info(
-      "GEMINI_API_KEY not configured — using deterministic fallback explainer",
-    );
+    logger.info("GEMINI_API_KEY not configured — using deterministic fallback explainer");
     return new FallbackAlertExplainer();
   }
 
@@ -314,14 +310,10 @@ export function createExplainer(config: AppConfig): AlertExplainer {
     return cached;
   });
 
-  logger.info(
-    { model: config.ai.model },
-    "Gemini explainer configured",
-  );
+  logger.info({ model: config.ai.model }, "Gemini explainer configured");
 
   return new AiExplainerService(explainer);
 }
-
 
 /** Run async tasks with a concurrency cap, preserving input order in the results. */
 export async function mapWithConcurrency<T, R>(
@@ -331,16 +323,19 @@ export async function mapWithConcurrency<T, R>(
 ): Promise<R[]> {
   const results = new Array<R>(items.length);
   let next = 0;
-  const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
-    while (next < items.length) {
-      const i = next++;
-      const item = items[i];
-      if (item === undefined) {
-        continue;
+  const workers = Array.from(
+    { length: Math.max(1, Math.min(limit, items.length)) },
+    async () => {
+      while (next < items.length) {
+        const i = next++;
+        const item = items[i];
+        if (item === undefined) {
+          continue;
+        }
+        results[i] = await fn(item, i);
       }
-      results[i] = await fn(item, i);
-    }
-  });
+    },
+  );
   await Promise.all(workers);
   return results;
 }

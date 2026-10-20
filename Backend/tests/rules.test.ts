@@ -108,10 +108,7 @@ describe("HTTP status rules", () => {
 
   it("flags 404 and 400 as WARNING client errors", () => {
     for (const status_code of [400, 404]) {
-      const result = evaluateObservation(
-        obs({ status_code, records_returned: 5 }),
-        opts,
-      );
+      const result = evaluateObservation(obs({ status_code, records_returned: 5 }), opts);
       expect(result.severity).toBe("WARNING");
       expect(result.findings.map((f) => f.anomaly_type)).toEqual(["HTTP_CLIENT_ERROR"]);
     }

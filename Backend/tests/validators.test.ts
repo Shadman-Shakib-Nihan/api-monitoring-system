@@ -1,12 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  createMonitorBodySchema,
-  observationSchema,
-} from "../src/validators/monitor.js";
-import {
-  alertIdParamSchema,
-  listAlertsQuerySchema,
-} from "../src/validators/alerts.js";
+import { createMonitorBodySchema, observationSchema } from "../src/validators/monitor.js";
+import { alertIdParamSchema, listAlertsQuerySchema } from "../src/validators/alerts.js";
 
 const validObservation = {
   api_name: "AppointmentAPI",
@@ -69,9 +63,7 @@ describe("observationSchema", () => {
   });
 
   it("rejects missing fields", () => {
-    expect(() =>
-      observationSchema.parse({ api_name: "X" }),
-    ).toThrow();
+    expect(() => observationSchema.parse({ api_name: "X" })).toThrow();
   });
 });
 

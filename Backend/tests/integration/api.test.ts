@@ -113,13 +113,21 @@ describe("POST /monitor", () => {
   });
 
   it("processes a mixed batch with correct per-item results", async () => {
-    const res = await supertest(app).post("/monitor").send({
-      observations: [
-        normalObservation,
-        { ...criticalObservation, api_name: "ReportAPI" },
-        { ...criticalObservation, api_name: "OrdersAPI", response_time_ms: 400, status_code: 404, records_returned: 3 },
-      ],
-    });
+    const res = await supertest(app)
+      .post("/monitor")
+      .send({
+        observations: [
+          normalObservation,
+          { ...criticalObservation, api_name: "ReportAPI" },
+          {
+            ...criticalObservation,
+            api_name: "OrdersAPI",
+            response_time_ms: 400,
+            status_code: 404,
+            records_returned: 3,
+          },
+        ],
+      });
     expect(res.status).toBe(200);
     expect(res.body.summary).toMatchObject({ total: 3, anomalous: 2, normal: 1 });
     expect(res.body.results.map((r: { isAnomalous: boolean }) => r.isAnomalous)).toEqual([
@@ -142,9 +150,12 @@ describe("POST /monitor", () => {
   });
 
   it("returns 400 with field details for an invalid observation", async () => {
-    const res = await supertest(app)
-      .post("/monitor")
-      .send({ api_name: "X", response_time_ms: 10, status_code: 999, records_returned: 0 });
+    const res = await supertest(app).post("/monitor").send({
+      api_name: "X",
+      response_time_ms: 10,
+      status_code: 999,
+      records_returned: 0,
+    });
     expect(res.status).toBe(400);
     expect(res.body.message).toBe("Validation failed");
     expect(res.body.details).toEqual([

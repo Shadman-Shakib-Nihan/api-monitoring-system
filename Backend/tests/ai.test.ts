@@ -103,9 +103,7 @@ describe("GeminiAlertExplainer with stubbed client", () => {
 
   it("throws on empty content", async () => {
     const explainer = new GeminiAlertExplainer(aiCfg, () => stubClient({ text: "  " }));
-    await expect(explainer.explain(anomalousResult())).rejects.toThrow(
-      /no content/,
-    );
+    await expect(explainer.explain(anomalousResult())).rejects.toThrow(/no content/);
   });
 
   it("throws on invalid JSON content", async () => {
@@ -126,9 +124,7 @@ describe("GeminiAlertExplainer with stubbed client", () => {
     const explainer = new GeminiAlertExplainer(aiCfg, () =>
       stubClient(new Error("This operation was aborted")),
     );
-    await expect(explainer.explain(anomalousResult())).rejects.toThrow(
-      /aborted/,
-    );
+    await expect(explainer.explain(anomalousResult())).rejects.toThrow(/aborted/);
   });
 });
 

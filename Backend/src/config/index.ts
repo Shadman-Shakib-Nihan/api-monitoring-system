@@ -8,7 +8,9 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(4000),
   HOST: z.string().min(1).default("0.0.0.0"),
-  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
+  LOG_LEVEL: z
+    .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
+    .default("info"),
   DATABASE_URL: z.string().min(1).default("file:./dev.db"),
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(120),
@@ -19,7 +21,7 @@ const envSchema = z.object({
   EMPTY_RESULT_ALLOWED_APIS: z.string().default("HealthCheckAPI,StatusAPI"),
   MAX_BATCH_SIZE: z.coerce.number().int().positive().default(50),
   MAX_BODY_SIZE_BYTES: z.coerce.number().int().positive().default(262_144),
- // OPENAI_API_KEY: z.string().optional().default(""),
+  // OPENAI_API_KEY: z.string().optional().default(""),
   //OPENAI_MODEL: z.string().default("gpt-4o-mini"),
   // rename/add in the Zod env schema:
   GEMINI_API_KEY: z.string().optional().default(""),
@@ -56,7 +58,9 @@ export type AppConfig = {
 function parseConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const parsed = envSchema.safeParse(env);
   if (!parsed.success) {
-    const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
+    const issues = parsed.error.issues
+      .map((i) => `${i.path.join(".")}: ${i.message}`)
+      .join("; ");
     throw new Error(`Invalid environment configuration: ${issues}`);
   }
   const e = parsed.data;
