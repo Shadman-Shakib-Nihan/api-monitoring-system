@@ -10,6 +10,7 @@ export const logger = pino({
       "headers.authorization",
       "apiKey",
       "OPENAI_API_KEY",
+      "GEMINI_API_KEY",
       "*.apiKey",
     ],
     remove: true,

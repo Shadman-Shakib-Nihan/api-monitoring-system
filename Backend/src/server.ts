@@ -1,25 +1,28 @@
 import express from "express";
-import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
+import { pinoHttp } from "pino-http";
 import { config } from "./config/index.js";
 import { logger } from "./logger.js";
-
-console.log(config.port, config.thresholds.warningMs);
-logger.info("config + logger OK");
-dotenv.config();
+import { globalRateLimiter } from "./middleware/rateLimit.js";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
 app.use(helmet());
 
+app.use(cors({ origin: config.corsOrigins }));
+
 app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-  })
+  pinoHttp({
+    logger,
+    autoLogging: config.nodeEnv !== "test",
+  }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: config.limits.maxBodySizeBytes }));
+
+app.use(globalRateLimiter);
 
 app.get("/health", (_req, res) => {
   res.json({
@@ -28,17 +31,12 @@ app.get("/health", (_req, res) => {
   });
 });
 
-app.use((_req, res) => {
-  res.status(404).json({
-    status: "error",
-    message: "Route not found",
-  });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
-const port = Number(process.env.PORT) || 4000;
-const host = process.env.HOST || "0.0.0.0";
-
-app.listen(port, host, () => {
-  console.log(`Server running at http://localhost:${port}`);
-  console.log(`Listening on ${host}:${port}`);
+app.listen(config.port, config.host, () => {
+  logger.info(
+    { port: config.port, host: config.host, nodeEnv: config.nodeEnv },
+    `Server running at http://localhost:${config.port}`,
+  );
 });

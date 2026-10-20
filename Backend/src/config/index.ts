@@ -3,11 +3,11 @@ import path from "path";
 import { z } from "zod";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
-dotenv.config();
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(4000),
+  HOST: z.string().min(1).default("0.0.0.0"),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
   DATABASE_URL: z.string().min(1).default("file:./dev.db"),
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
@@ -33,6 +33,7 @@ const envSchema = z.object({
 export type AppConfig = {
   nodeEnv: "development" | "test" | "production";
   port: number;
+  host: string;
   logLevel: string;
   databaseUrl: string;
   corsOrigins: string[];
@@ -65,6 +66,7 @@ function parseConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     nodeEnv: e.NODE_ENV,
     port: e.PORT,
+    host: e.HOST,
     logLevel: e.LOG_LEVEL,
     databaseUrl: e.DATABASE_URL,
     corsOrigins: e.CORS_ORIGIN.split(",")

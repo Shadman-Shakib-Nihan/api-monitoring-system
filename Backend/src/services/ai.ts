@@ -168,9 +168,9 @@ export class GeminiAlertExplainer implements AlertExplainer {
 
     const content = response.text;
 
-    console.log(
-      "Gemini finish reason:",
-      response.candidates?.[0]?.finishReason,
+    logger.debug(
+      { model: this.cfg.model, finishReason: response.candidates?.[0]?.finishReason },
+      "Gemini response received",
     );
 
     if (typeof content !== "string" || content.trim().length === 0) {
@@ -182,7 +182,10 @@ export class GeminiAlertExplainer implements AlertExplainer {
     try {
       parsed = JSON.parse(content);
     } catch (error) {
-      console.error("Gemini returned invalid JSON:", content);
+      logger.warn(
+        { model: this.cfg.model, snippet: content.slice(0, 200) },
+        "Gemini returned invalid JSON",
+      );
       throw error;
     }
 
