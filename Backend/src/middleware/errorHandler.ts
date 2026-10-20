@@ -1,7 +1,15 @@
-import type { ErrorRequestHandler, RequestHandler } from "express";
+import type { ErrorRequestHandler, NextFunction, Request, RequestHandler, Response } from "express";
 import { ZodError } from "zod";
 import { config } from "../config/index.js";
 import { logger } from "../logger.js";
+
+export function asyncHandler(
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
+): RequestHandler {
+  return (req, res, next) => {
+    fn(req, res, next).catch(next);
+  };
+}
 
 export const notFoundHandler: RequestHandler = (req, res) => {
   res.status(404).json({

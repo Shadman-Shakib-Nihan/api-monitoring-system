@@ -2,6 +2,7 @@ import type { Alert, Prisma, PrismaClient } from "@prisma/client";
 import type {
   EvaluationResult,
   ExplainedAlert,
+  ExplanationSource,
   Finding,
 } from "../monitoring/types.js";
 
@@ -19,7 +20,7 @@ export interface AlertDto {
   likelyCause: string;
   suggestedActions: string[];
   severityExplanation: string;
-  source: string;
+  source: ExplanationSource;
   status: string;
   fingerprint: string;
   occurrenceCount: number;
@@ -82,7 +83,7 @@ export function toAlertDto(alert: Alert): AlertDto {
     likelyCause: alert.likelyCause,
     suggestedActions: parseJsonStringArray(alert.suggestedActions),
     severityExplanation: alert.severityExplanation,
-    source: alert.source,
+    source: alert.source === "AI" ? "AI" : "FALLBACK",
     status: alert.status,
     fingerprint: alert.fingerprint,
     occurrenceCount: alert.occurrenceCount,

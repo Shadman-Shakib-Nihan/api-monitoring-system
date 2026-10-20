@@ -142,6 +142,7 @@ export class GeminiAlertExplainer implements AlertExplainer {
           systemInstruction: SYSTEM_PROMPT,
           temperature: 0.2,
           maxOutputTokens: 1200,
+          thinkingConfig: { thinkingBudget: 0 },
           responseMimeType: "application/json",
           responseJsonSchema: {
             type: "OBJECT",

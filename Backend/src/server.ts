@@ -6,6 +6,7 @@ import { config } from "./config/index.js";
 import { logger } from "./logger.js";
 import { globalRateLimiter } from "./middleware/rateLimit.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
+import { monitorRouter } from "./routes/monitor.js";
 
 const app = express();
 
@@ -30,6 +31,8 @@ app.get("/health", (_req, res) => {
     message: "API Monitoring Backend is running",
   });
 });
+
+app.use("/monitor", monitorRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
