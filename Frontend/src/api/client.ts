@@ -1,4 +1,10 @@
-import type { ApiErrorDetail, HealthResponse, ListAlertsResponse } from "../types/alert";
+import type {
+  Alert,
+  AlertResponse,
+  ApiErrorDetail,
+  HealthResponse,
+  ListAlertsResponse,
+} from "../types/alert";
 
 const BASE_URL: string =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "http://localhost:4000";
@@ -21,11 +27,15 @@ export function apiBaseUrl(): string {
   return BASE_URL;
 }
 
-async function request<T>(path: string, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<T> {
+async function request<T>(
+  path: string,
+  options: { method?: string; timeoutMs?: number } = {},
+): Promise<T> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const timer = setTimeout(() => controller.abort(), options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
   try {
     const res = await fetch(`${BASE_URL}${path}`, {
+      method: options.method ?? "GET",
       signal: controller.signal,
       headers: { Accept: "application/json" },
     });
@@ -64,5 +74,17 @@ export function fetchAlerts(params?: {
 }
 
 export function checkHealth(): Promise<HealthResponse> {
-  return request<HealthResponse>("/health", 5_000);
+  return request<HealthResponse>("/health", { timeoutMs: 5_000 });
+}
+
+export function fetchAlert(id: string): Promise<Alert> {
+  return request<AlertResponse>(`/alerts/${encodeURIComponent(id)}`).then(
+    (body) => body.alert,
+  );
+}
+
+export function resolveAlert(id: string): Promise<Alert> {
+  return request<AlertResponse>(`/alerts/${encodeURIComponent(id)}/resolve`, {
+    method: "PATCH",
+  }).then((body) => body.alert);
 }

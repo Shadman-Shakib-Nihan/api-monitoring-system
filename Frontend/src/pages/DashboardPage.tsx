@@ -26,7 +26,11 @@ function SummaryCard({
   );
 }
 
-export default function DashboardPage() {
+export default function DashboardPage({
+  onSelect,
+}: {
+  onSelect: (id: string) => void;
+}) {
   const { alerts, total, loading, refreshing, error, lastUpdated, reload } =
     useAlerts(100);
 
@@ -80,7 +84,7 @@ export default function DashboardPage() {
       {!loading && !error && alerts !== null && alerts.length === 0 && <EmptyState />}
 
       {!loading && !error && alerts !== null && alerts.length > 0 && (
-        <AlertList alerts={alerts} />
+        <AlertList alerts={alerts} onSelect={onSelect} />
       )}
     </div>
   );

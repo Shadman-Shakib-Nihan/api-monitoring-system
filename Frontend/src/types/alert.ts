@@ -40,6 +40,11 @@ export interface ListAlertsResponse {
   alerts: Alert[];
 }
 
+export interface AlertResponse {
+  status: "ok";
+  alert: Alert;
+}
+
 export interface HealthResponse {
   status: "ok" | string;
   message: string;
